@@ -18,6 +18,13 @@ def print_board(board):
         print()  # Print a newline after each row
 
 def parse_move(move):
+    move = move.strip()  # Clean up whitespace
+    if not move:
+        raise ValueError("Move cannot be empty.")
+    # Should consider validating what we can about the notation syntax right away
+    # e.g. should always start with a valid piece or destination square
+
+    ## Initialize move information dictionary
     move_info = {
         "notation": move,
         "piece": None,
@@ -69,13 +76,19 @@ def parse_move(move):
     
     ## Determine piece and destination
     if len(move) < 2:
-        raise ValueError("Invalid move format.")
+        raise ValueError("Invalid move notation. Length must be at least 2 characters. You entered: " + move_info["notation"])
+    if len(move) > 4:
+        raise ValueError("Invalid move notation. Length of piece & destination square info cannot exceed 4 characters. You entered: " + move_info["notation"])
     
     if move[0] in ("K", "Q", "R", "B", "N"):
         move_info["piece"] = move[0].upper()
-    else:   # Assume it's a pawn move  
+    elif move[0] in ("a","b","c","d","e","f","g","h"):   # Assume it's a pawn move  
         move_info["piece"] = "P"
+    else:
+        raise ValueError(f"Invalid piece notation. Must be K, Q, R, B, N, or a pawn move. You entered: {move_info["notation"]}")
     # should add regex to validate destination square syntax
+    if move[-2] not in ("a", "b", "c", "d", "e", "f", "g", "h") or not move[-1].isdigit() or int(move[-1]) < 1 or int(move[-1]) > 8:
+        raise ValueError(f"Invalid destination square notation. Must be a valid square like e4, d5, etc. You entered: {move_info['notation']}")
     move_info["destination"] = move[-2:]  # Last two characters are the destination square
 
     return move_info
@@ -99,7 +112,11 @@ while True:
     if move.lower() == 'exit':
         print("Exiting the game. Goodbye!")
         break
-    move_info = parse_move(move)
+    try:
+        move_info = parse_move(move)
+    except ValueError as e:
+        print(f"Error parsing move: {e}")
+        continue
     # Here you would normally process the move, update the board, and check for game status.
     # For now, we will just print the move.
     print(f"Parsed move info: \n{move_info}")
