@@ -1,21 +1,21 @@
+import board
 
+# board = [
+#     ["r","n","b","q","k","b","n","r"],
+#     ["p","p","p","p","p","p","p","p"],
+#     ["-","-","-","-","-","-","-","-"],
+#     ["-","-","-","-","-","-","-","-"],
+#     ["-","-","-","-","-","-","-","-"],
+#     ["-","-","-","-","-","-","-","-"],
+#     ["P","P","P","P","P","P","P","P"],
+#     ["R","N","B","Q","K","B","N","R"]
+# ]
 
-board = [
-    ["r","n","b","q","k","b","n","r"],
-    ["p","p","p","p","p","p","p","p"],
-    ["-","-","-","-","-","-","-","-"],
-    ["-","-","-","-","-","-","-","-"],
-    ["-","-","-","-","-","-","-","-"],
-    ["-","-","-","-","-","-","-","-"],
-    ["P","P","P","P","P","P","P","P"],
-    ["R","N","B","Q","K","B","N","R"]
-]
-
-def print_board(board):
-    for row in board:
-        for square in row:
-            print(square, end=" ")
-        print()  # Print a newline after each row
+# def print_board(board):
+#     for row in board:
+#         for square in row:
+#             print(square, end=" ")
+#         print()  # Print a newline after each row
 
 def parse_move(move):
     move = move.strip()  # Clean up whitespace
@@ -77,9 +77,10 @@ def parse_move(move):
     ## Determine piece and destination
     if len(move) < 2:
         raise ValueError("Invalid move notation. Length must be at least 2 characters. You entered: " + move_info["notation"])
-    if len(move) > 4:
+    if len(move) > 4:  
         raise ValueError("Invalid move notation. Length of piece & destination square info cannot exceed 4 characters. You entered: " + move_info["notation"])
-    
+    # NOTE: extreme corner case for long notation like "Nf3e5" will keep the player "soft locked" from making that move, but let's not worry about that for now
+
     if move[0] in ("K", "Q", "R", "B", "N"):
         move_info["piece"] = move[0].upper()
     elif move[0] in ("a","b","c","d","e","f","g","h"):   # Assume it's a pawn move  
@@ -105,7 +106,8 @@ def move_piece(piece, destination):
 ## Main Game
 print("Welcome to Text-Based Chess!")
 print("Here is the initial board setup:")
-print_board(board)
+board = board.Board()
+board.print_board()
 
 while True:
     move = input("Enter your move (e.g., e2 e4) or 'exit' to quit: ")
@@ -120,4 +122,3 @@ while True:
     # Here you would normally process the move, update the board, and check for game status.
     # For now, we will just print the move.
     print(f"Parsed move info: \n{move_info}")
-    # print(f"You entered the move: {move}")
